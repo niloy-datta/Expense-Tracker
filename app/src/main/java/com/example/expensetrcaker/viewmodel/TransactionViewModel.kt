@@ -37,6 +37,10 @@ class TransactionViewModel(application: Application) : AndroidViewModel(applicat
     private val walletDao = AppDatabase.getDatabase(application).walletDao()
     val allWallets = walletDao.getAllWallets().stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
+    val totalBalance = allWallets.map { wallets ->
+        wallets.sumOf { it.balance }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, 0.0)
+
     val personality = allTransactions.map { transactions ->
         com.example.expensetrcaker.ai.SpendingAI.calculatePersonality(transactions)
     }.stateIn(viewModelScope, SharingStarted.Lazily, com.example.expensetrcaker.ai.SpendingAI.calculatePersonality(emptyList()))

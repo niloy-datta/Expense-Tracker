@@ -33,9 +33,15 @@
 > Task :app:validateSigningDebug UP-TO-DATE
 > Task :app:writeDebugAppMetadata UP-TO-DATE
 > Task :app:writeDebugSigningConfigVersions UP-TO-DATE
+
 > Task :app:kspDebugKotlin
+w: [ksp] C:/Users/niloy/AndroidStudioProjects/ExpenseTrcaker/app/src/main/java/com/example/expensetrcaker/data/AppDatabase.kt:9: Schema export directory was not provided to the annotation processor so Room cannot export the schema. You can either provide `room.schemaLocation` annotation processor argument by applying the Room Gradle plugin (id 'androidx.room') OR set exportSchema to false.
+
 > Task :app:compileDebugKotlin
-> Task :app:compileDebugJavaWithJavac UP-TO-DATE
+w: file:///C:/Users/niloy/AndroidStudioProjects/ExpenseTrcaker/app/src/main/java/com/example/expensetrcaker/AddTransactionScreen.kt:327:32 'val Icons.Rounded.Backspace: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.Backspace.
+w: file:///C:/Users/niloy/AndroidStudioProjects/ExpenseTrcaker/app/src/main/java/com/example/expensetrcaker/AnalyticsScreen.kt:330:9 'fun LinearProgressIndicator(progress: Float, modifier: Modifier = ..., color: Color = ..., trackColor: Color = ..., strokeCap: StrokeCap = ...): Unit' is deprecated. Use the overload that takes `progress` as a lambda.
+
+> Task :app:compileDebugJavaWithJavac
 > Task :app:processDebugJavaRes UP-TO-DATE
 > Task :app:mergeDebugJavaResource UP-TO-DATE
 > Task :app:dexBuilderDebug
@@ -44,5 +50,5 @@
 > Task :app:createDebugApkListingFileRedirect UP-TO-DATE
 > Task :app:assembleDebug
 
-BUILD SUCCESSFUL in 5s
-38 actionable tasks: 5 executed, 33 up-to-date
+BUILD SUCCESSFUL in 7s
+38 actionable tasks: 6 executed, 32 up-to-date

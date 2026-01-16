@@ -215,7 +215,7 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: TransactionViewModel) {
     val transactions by viewModel.allTransactions.collectAsState(initial = emptyList())
     val totalIncome by viewModel.totalIncome.collectAsState(initial = 0.0)
     val totalExpense by viewModel.totalExpense.collectAsState(initial = 0.0)
-    val balance = totalIncome - totalExpense
+    val balance by viewModel.totalBalance.collectAsState()
 
     Box(
         modifier = modifier
