@@ -1,68 +1,71 @@
-# 🚀 Expense Tracker - Master Plan for Play Store Domination
+# 🚀 Expense Tracker - Implementation Roadmap & Status
 
-## 🏆 Vision
-To create the most engaging, intelligent, and beautiful expense tracker on the Google Play Store. We don't just track expenses; we empower financial freedom through AI-driven insights and gamified progress.
+## ✅ Completed Features
 
-## 💰 Profitability Strategy (Monetization)
-To be most profitable, we will use a **Freemium Model** with high-value Pro features.
-*   **Free Tier**: unlimited manual entry, 2 wallets, basic charts, standard categories.
-*   **Pro Tier (Subscription/One-time)**:
-    *   🤖 **AI Receipt Scanning**: Snap a photo, auto-extract date, amount, merchant.
-    *   📊 **Advanced Analytics**: Forecasting, "Spending Personality" reports.
-    *   ☁️ **Cloud Sync & Backup**: Real-time sync across devices.
-    *   👨‍👩‍👧 **Shared Wallets**: For couples/partners.
-    *   🎨 **Premium Themes**: Custom icons, advanced dark mode/OLED blacks.
-    *   📄 **Export**: PDF/Excel reports for taxes.
+- **Core Architecture**: MVVM, Room Database, Jetpack Compose.
+- **Home Screen**: Balance summary, Recent transactions, basic deletion.
+- **Add Transaction**: Custom keypad, Expense/Income toggle, Wallet selection.
+- **Analytics**: AI Spending Personality, Swirl Chart, Budget Management.
+- **Wallets**: Basic structure (Database entities exist).
+- **Navigation**: Bottom bar navigation.
+- **Categories (Backend)**: `CategoryEntity` and DAO implemented. UI updated to fetch from DB.
 
-## 🎨 Design Philosophy (The "Wow" Factor)
-*   **Style**: Modern Deep Dark Mode with Glassmorphism (blurs, gradients).
-*   **Interactions**: Smooth animations (charts growing, list items sliding in).
-*   **Typography**: Clean, rounded modern fonts (Google Fonts: Outfit or Manrope).
-*   **Charts**: Interactive, touch-draggable graphs, not just static images.
+## 🚧 Missing / Planned Features (The "Gap" List)
 
-## 🛠 Features Breakdown
+These are the critical features needed to make the app fully usable and premium.
 
-### Phase 1: The Core (MVP)
-1.  **Dashboard**:
-    *   Total Balance Card (Glassmorphic).
-    *   Monthly Spending vs Budget progress bar.
-    *   Recent Transactions list.
-2.  **Transaction Entry**:
-    *   Super fast input (Amount -> Category -> Done).
-    *   Custom Keyboard for quick number entry.
-3.  **Analytics**:
-    *   Pie chart for categories.
-    *   Bar chart for daily spending.
-4.  **Settings**:
-    *   Currency selection.
-    *   Dark/Light mode toggle.
+### 1. Dynamic Category Management (Urgent)
 
-### Phase 2: Engagement & Intelligence
-1.  **AI Smart Categories**: Learn from user history to auto-suggest categories.
-2.  **Budgets & Goals**:
-    *   Set monthly limits per category.
-    *   "Savings Jars" visual tracker.
-3.  **Gamification**:
-    *   🔥 **Streaks**: For logging daily.
-    *   🏅 **Badges**: "Budget Master", "No Spend Day".
+- **Current State**: Backend ready. UI reads from DB.
+- **Goal**: Users should be able to Create, Edit, and Delete categories via UI.
+- **Tech**: Create `ManageCategoriesScreen`.
 
-### Phase 3: The Pro Features
-1.  **Receipt Scanning (OCR)** (Google ML Kit).
-2.  **Data Export** (CSV/PDF).
-3.  **Biometric Lock** (Fingerprint/FaceID).
+### 2. Transaction Editing ✅
 
-## 🏗 Technical Architecture
-*   **Language**: Kotlin
-*   **UI Framework**: Jetpack Compose (Modern, Declarative).
-*   **Architecture**: MVVM (Model-View-ViewModel) + Clean Architecture.
-*   **Database**: Room (Local SQLite).
-*   **DI**: Hilt (Dependency Injection).
-*   **Async**: Coroutines & Flow.
-*   **ML**: Google ML Kit (for text recognition).
+- **Status**: ✅ Complete
+- **Implementation**: Users can now edit transactions! Tap the Edit icon on any transaction to modify details.
+- **Features**:
+  - Edit button added to each transaction item
+  - Pre-fills all fields (amount, category, wallet, type) when editing
+  - Properly updates wallet balances when transaction changes
+  - Dynamic screen title ("Edit Transaction" vs "Add Transaction")
+  - Update button changes to "UPDATE TRANSACTION" in edit mode
 
-## 📅 Execution Roadmap
-1.  **Setup**: Configure Compose, Themes, Navigation.
-2.  **Database**: Define Entities (Transaction, Category, Wallet).
-3.  **UI Construction**: Build the "Add Transaction" and "Home" screens first.
-4.  **Logic**: Implement ViewModels and Repository.
-5.  **Polish**: Add animations and specific "delight" moments.
+### 3. Settings & Personalization
+
+- **Current State**: No settings screen. Hardcoded `$` currency.
+- **Goal**:
+  - Change Currency Symbol (e.g., €, £, ₹).
+  - Dark/Light Mode Toggle.
+  - Data Reset options.
+
+### 4. Search & Filters
+
+- **Current State**: Only shows "Recent" transactions.
+- **Goal**: Search by note/title, filter by Date Range or Category.
+
+### 5. Advanced Wallet Features
+
+- **Current State**: Wallets exist but no "Transfer" feature.
+- **Goal**: Move money from "Bank" to "Cash" wallet.
+
+---
+
+## 📅 Implementation Plan
+
+### Phase 1: Foundation (Categories & Editing)
+
+1.  **Database Upgrade**: ✅ Created `CategoryEntity` and initialized default categories.
+2.  **UI Updates**: ✅ `AddTransactionScreen` and `AnalyticsScreen` now use dynamic categories.
+3.  **Category UI**: Create a screen to manage (add/edit) categories.
+4.  **Edit Flow**: Update ViewModel & UI to support updating transactions.
+
+### Phase 2: Settings & Preferences
+
+1.  Build `SettingsScreen` with Datastore Preferences.
+2.  Implement Currency formatting helper globally.
+
+### Phase 3: Polish & Search
+
+1.  Add Search bar to Home or separate screen.
+2.  Add animations for transitions.

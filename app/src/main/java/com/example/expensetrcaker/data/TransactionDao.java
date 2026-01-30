@@ -6,6 +6,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 import java.util.List;
 
 @Dao
@@ -18,6 +19,9 @@ public interface TransactionDao {
 
     @Delete
     void deleteTransaction(TransactionEntity transaction);
+
+    @Update
+    void updateTransaction(TransactionEntity transaction);
 
     @Query("SELECT SUM(amount) FROM transactions WHERE isExpense = 0")
     LiveData<Double> getTotalIncome();

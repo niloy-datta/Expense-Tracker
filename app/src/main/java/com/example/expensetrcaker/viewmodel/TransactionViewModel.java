@@ -16,6 +16,8 @@ import com.example.expensetrcaker.data.TransactionDao;
 import com.example.expensetrcaker.data.TransactionEntity;
 import com.example.expensetrcaker.data.WalletDao;
 import com.example.expensetrcaker.data.WalletEntity;
+import com.example.expensetrcaker.data.CategoryDao;
+import com.example.expensetrcaker.data.CategoryEntity;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,11 +26,13 @@ public class TransactionViewModel extends AndroidViewModel {
     private final TransactionDao transactionDao;
     private final BudgetDao budgetDao;
     private final WalletDao walletDao;
+    private final CategoryDao categoryDao;
     private final ExecutorService executorService;
 
     private final LiveData<List<TransactionEntity>> allTransactions;
     private final LiveData<List<BudgetEntity>> allBudgets;
     private final LiveData<List<WalletEntity>> allWallets;
+    private final LiveData<List<CategoryEntity>> allCategories;
     private final LiveData<Double> totalIncome;
     private final LiveData<Double> totalExpense;
 
@@ -38,6 +42,7 @@ public class TransactionViewModel extends AndroidViewModel {
         transactionDao = db.transactionDao();
         budgetDao = db.budgetDao();
         walletDao = db.walletDao();
+        categoryDao = db.categoryDao();
         executorService = Executors.newSingleThreadExecutor();
 
         allTransactions = transactionDao.getAllTransactions();
@@ -59,6 +64,35 @@ public class TransactionViewModel extends AndroidViewModel {
                 });
             }
         });
+
+        allCategories = categoryDao.getAllCategories();
+        allCategories.observeForever(categories -> {
+            if (categories != null && categories.isEmpty()) {
+                executorService.execute(() -> {
+                    // Expense Categories
+                    categoryDao.insertCategory(
+                            new CategoryEntity("Food", "Fastfood", Color.parseColor("#FF4081"), "EXPENSE"));
+                    categoryDao.insertCategory(
+                            new CategoryEntity("Transport", "DirectionsCar", Color.parseColor("#00E5FF"), "EXPENSE"));
+                    categoryDao.insertCategory(
+                            new CategoryEntity("Shopping", "ShoppingBag", Color.parseColor("#FFC107"), "EXPENSE"));
+                    categoryDao.insertCategory(
+                            new CategoryEntity("Bills", "Receipt", Color.parseColor("#00E676"), "EXPENSE"));
+                    categoryDao
+                            .insertCategory(new CategoryEntity("Rent", "Home", Color.parseColor("#9C27B0"), "EXPENSE"));
+
+                    // Income Categories
+                    categoryDao.insertCategory(
+                            new CategoryEntity("Salary", "Check", Color.parseColor("#00E676"), "INCOME"));
+                    categoryDao.insertCategory(
+                            new CategoryEntity("Bonus", "Check", Color.parseColor("#00E5FF"), "INCOME"));
+                    categoryDao
+                            .insertCategory(new CategoryEntity("Gift", "Check", Color.parseColor("#FFC107"), "INCOME"));
+                    categoryDao.insertCategory(
+                            new CategoryEntity("Others", "Check", Color.parseColor("#03DAC6"), "INCOME"));
+                });
+            }
+        });
     }
 
     public LiveData<List<TransactionEntity>> getAllTransactions() {
@@ -71,6 +105,10 @@ public class TransactionViewModel extends AndroidViewModel {
 
     public LiveData<List<WalletEntity>> getAllWallets() {
         return allWallets;
+    }
+
+    public LiveData<List<CategoryEntity>> getAllCategories() {
+        return allCategories;
     }
 
     public LiveData<Double> getTotalIncome() {
@@ -110,6 +148,29 @@ public class TransactionViewModel extends AndroidViewModel {
             transactionDao.deleteTransaction(transaction);
             double balanceChange = transaction.isExpense() ? transaction.getAmount() : -transaction.getAmount();
             walletDao.updateBalance(transaction.getWalletId(), balanceChange);
+        });
+    }
+
+    public void updateTransaction(TransactionEntity oldTransaction, String title, double amount, String category,
+            boolean isExpense, long walletId) {
+        executorService.execute(() -> {
+            // Revert the old transaction's impact on wallet balance
+            double oldBalanceChange = oldTransaction.isExpense() ? oldTransaction.getAmount()
+                    : -oldTransaction.getAmount();
+            walletDao.updateBalance(oldTransaction.getWalletId(), oldBalanceChange);
+
+            // Update the transaction entity
+            oldTransaction.setTitle(title);
+            oldTransaction.setAmount(amount);
+            oldTransaction.setCategory(category);
+            oldTransaction.setExpense(isExpense);
+            oldTransaction.setWalletId(walletId);
+
+            transactionDao.updateTransaction(oldTransaction);
+
+            // Apply the new transaction's impact on wallet balance
+            double newBalanceChange = isExpense ? -amount : amount;
+            walletDao.updateBalance(walletId, newBalanceChange);
         });
     }
 
