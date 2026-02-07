@@ -35,7 +35,6 @@ import androidx.compose.material.icons.rounded.DirectionsCar
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.KeyboardArrowUp
-import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Receipt
 import androidx.compose.material.icons.rounded.Restaurant
 import androidx.compose.material.icons.rounded.ShoppingCart
@@ -95,7 +94,7 @@ class MainActivity : ComponentActivity() {
                                                                                 "analytics" ||
                                                                         currentScreen ==
                                                                                 "wallets" ||
-                                                                        currentScreen == "profile"
+                                                                        currentScreen == "settings"
                                                         ) {
                                                                 BottomNavBar(
                                                                         currentScreen =
@@ -165,12 +164,9 @@ class MainActivity : ComponentActivity() {
                                                                                 innerPadding
                                                                         ),
                                                                         viewModel,
-                                                                        onEditTransaction = {
-                                                                                transaction ->
-                                                                                transactionToEdit =
-                                                                                        transaction
+                                                                        onTransactionClick = { id ->
                                                                                 currentScreen =
-                                                                                        "add_transaction"
+                                                                                        "transaction_detail/$id"
                                                                         }
                                                                 )
                                                         "analytics" ->
@@ -197,6 +193,23 @@ class MainActivity : ComponentActivity() {
                                                                         },
                                                                         viewModel = viewModel
                                                                 )
+                                                        "settings" ->
+                                                                SettingsScreen(
+                                                                        onBack = {
+                                                                                currentScreen =
+                                                                                        "home"
+                                                                        },
+                                                                        onNavigate = {
+                                                                                currentScreen = it
+                                                                        }
+                                                                )
+                                                        "categories" ->
+                                                                CategoriesScreen(
+                                                                        onBack = {
+                                                                                currentScreen =
+                                                                                        "settings"
+                                                                        }
+                                                                )
                                                         "add_transaction" ->
                                                                 AddTransactionScreen(
                                                                         onBack = {
@@ -207,6 +220,38 @@ class MainActivity : ComponentActivity() {
                                                                         existingTransaction =
                                                                                 transactionToEdit
                                                                 )
+                                                        else -> {
+                                                                if (currentScreen.startsWith(
+                                                                                "transaction_detail/"
+                                                                        )
+                                                                ) {
+                                                                        val transactionId =
+                                                                                currentScreen
+                                                                                        .substringAfter(
+                                                                                                "transaction_detail/"
+                                                                                        )
+                                                                                        .toIntOrNull()
+                                                                                        ?: 0
+                                                                        TransactionDetailScreen(
+                                                                                transactionId =
+                                                                                        transactionId,
+                                                                                onBack = {
+                                                                                        currentScreen =
+                                                                                                "home"
+                                                                                },
+                                                                                onEdit = {
+                                                                                        transaction
+                                                                                        ->
+                                                                                        transactionToEdit =
+                                                                                                transaction
+                                                                                        currentScreen =
+                                                                                                "add_transaction"
+                                                                                },
+                                                                                viewModel =
+                                                                                        viewModel
+                                                                        )
+                                                                }
+                                                        }
                                                 }
                                         }
                                 }
@@ -263,10 +308,10 @@ fun BottomNavBar(currentScreen: String, onScreenSelected: (String) -> Unit) {
                                         onClick = { onScreenSelected("wallets") }
                                 )
                                 NavIcon(
-                                        icon = Icons.Rounded.Person,
-                                        label = "Profile",
-                                        isSelected = currentScreen == "profile",
-                                        onClick = { onScreenSelected("profile") }
+                                        icon = Icons.Rounded.Settings,
+                                        label = "Settings",
+                                        isSelected = currentScreen == "settings",
+                                        onClick = { onScreenSelected("settings") }
                                 )
                         }
                 }
@@ -298,7 +343,7 @@ fun NavIcon(icon: ImageVector, label: String, isSelected: Boolean, onClick: () -
 fun HomeScreen(
         modifier: Modifier = Modifier,
         viewModel: TransactionViewModel,
-        onEditTransaction: (com.example.expensetrcaker.data.TransactionEntity) -> Unit = {}
+        onTransactionClick: (Int) -> Unit
 ) {
         val transactions by viewModel.allTransactions.observeAsState(initial = emptyList())
         val totalIncome by viewModel.totalIncome.observeAsState(initial = 0.0)
@@ -438,7 +483,7 @@ fun HomeScreen(
                                         TransactionItemClone(
                                                 item = item,
                                                 onDelete = { viewModel.deleteTransaction(item) },
-                                                onEdit = { onEditTransaction(item) }
+                                                onClick = { onTransactionClick(item.id) }
                                         )
                                 }
                         }
@@ -474,7 +519,7 @@ fun FinanceIndicatorClone(label: String, amount: String, color: Color, isIncome:
 fun TransactionItemClone(
         item: com.example.expensetrcaker.data.TransactionEntity,
         onDelete: () -> Unit,
-        onEdit: () -> Unit
+        onClick: () -> Unit
 ) {
         Box(
                 modifier =
@@ -487,7 +532,7 @@ fun TransactionItemClone(
                                         RoundedCornerShape(20.dp)
                                 )
                                 .padding(16.dp)
-                                .noRippleClickable(onEdit)
+                                .noRippleClickable(onClick)
         ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                         // Icon

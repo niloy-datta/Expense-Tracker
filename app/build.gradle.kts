@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+layout.buildDirectory.set(file("build_temp"))
+
 android {
     namespace = "com.example.expensetrcaker"
     compileSdk = 36
